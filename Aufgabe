@@ -1,0 +1,142 @@
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+
+
+$mainWindow = New-Object System.Windows.Forms.Form
+$mainWindow.Text = "Umrechner"
+$mainWindow.BackColor = "beige"
+$mainWindow.StartPosition = "CenterScreen"
+$mainWindow.Size = "740,400"
+
+
+
+
+$text2 = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='C:'"
+
+$freespaceMB = [math]::Round($disk.FreeSpace / 1MB, 2)
+$totalSpaceMB = [math]::Round($disk.Size / 1MB, 2)
+$freeSpacePercent = [math]::Round(($disk.FreeSpace / $disk.Size) * 100, 2)
+$usedSpaceMB = [math]::Round($totalSpaceMB - $freeSpaceMB, 2)
+$usedSpacePercent = [math]::Round((($disk.Size - $disk.FreeSpace) / $disk.Size) * 100, 2)
+$currentDateTime = Get-Date -Format "dddd, dd MMMM yyyy HH:mm:ss"
+
+
+
+#
+$text1 = New-Object System.Windows.Forms.Label
+$text1.Text = "Systeminformationen"
+$text1.Location = New-Object System.Drawing.Point(10, 10)  
+$text1.Font = New-Object System.Drawing.Font("Arial", 10, [System.Drawing.Fontstyle]::Bold)  
+$text1.autosize = $true
+
+$mainWindow.Controls.Add($text1)
+
+#
+$text2 = New-Object System.Windows.Forms.Label 
+$text2.text = "Betriebssystem: $($os.Caption) $($os.OSArchitecture)"
+$text2.location = New-Object System.Drawing.Point(10, 35)
+$text2.Font = New-Object System.Drawing.Font("Arial", 10)
+$text2.autosize = $true 
+
+
+$mainWindow.Controls.Add($text2)
+
+#
+$text3 = New-Object System.Windows.Forms.Label
+$text3.text = "Freier Speicher: $freeSpaceMB MiB ($freeSpacePercent%) von $totalSpaceMB MiB" 
+$text3.location = New-Object System.Drawing.Point(10, 70)
+$text3.Font = New-Object System.Drawing.Font("Arial", 10)
+$text3.autosize = $true
+
+
+$mainWindow.Controls.Add($text3)
+
+#
+$text4 = New-Object System.Windows.Forms.Label
+$text4.text = "Belegter Speicher: $usedSpaceMB MiB ($usedSpacePercent%)" 
+$text4.location = New-Object System.Drawing.Point(10, 95)
+$text4.Font = New-Object System.Drawing.Font("Arial", 10)
+$text4.autosize = $true
+
+
+$mainWindow.Controls.Add($text4)
+
+#
+$text5 = New-Object System.Windows.Forms.Label
+$text5.text = "Gesamter Speicher:$totalSpaceMB MiB" 
+$text5.location = New-Object System.Drawing.Point(10, 120)
+$text5.Font = New-Object System.Drawing.Font("Arial", 10)
+$text5.autosize = $true
+
+$mainWindow.Controls.Add($text5)
+
+$temp = New-Object System.Windows.Forms.Label
+$temp.Text = "CPU Temperatur: °C / °F"
+$temp.Location = New-Object System.Drawing.Point(400, 70) 
+$temp.AutoSize = $true
+$temp.Font = New-Object System.Drawing.Font("Arial", 10)
+$mainWindow.Controls.Add($temp)
+
+$datumauf=New-Object System.Windows.Forms.Label
+$datumauf.text = "Programm geöffnet: $currentDateTime"
+$datumauf.location = New-Object System.Drawing.Point(400, 95)
+$datumauf.autosize = $true
+$temp.font = New-Object System.Drawing.Font("Arial", 10)
+$mainWindow.Controls.Add($datumauf)
+
+
+$linePanel = New-Object System.Windows.Forms.Panel
+$linePanel.BackColor = "black"
+$linePanel.Size = New-Object System.Drawing.Size(740, 1)  
+$linePanel.Location = New-Object System.Drawing.Point(10, 160)
+$mainWindow.Controls.Add($linePanel)
+
+
+
+$button1 = new-object System.Windows.Forms.Button
+$button1.Width = 150
+$button1.location = new-object system.drawing.point( 10, 180)
+$button1.text = "1.Quellordner wählen"
+$button1.Add_click({
+
+
+$folder1dialog = New-Object System.Windows.Forms.FolderBrowserDialog
+$folder1dialog.Description = "Wählen Sie einen Ordner aus"
+
+
+})
+
+
+$mainWindow.controls.add($button1)
+
+
+$labelfolder1 = New-Object System.Windows.Forms.Label 
+$labelfolder1.text = "Kein Ordner Ausgewählt"
+$labelfolder1.size = New-Object System.Drawing.Size (380, 30)
+$labelfolder1.location = New-Object system.drawing.point(380, 30)
+
+
+
+
+
+
+
+
+$button2 = new-object System.Windows.Forms.Button
+$button2.Width = 150
+$button2.location = new-object system.drawing.point( 10, 220)
+$button2.text = "2. Zielordner wählen"
+$mainWindow.controls.add($button2)
+
+$button3 = new-object System.Windows.Forms.Button
+$button3.Width = 150
+$button3.location = new-object system.drawing.point( 10, 260)
+$button3.text = "3.Archivierung starten"
+$mainWindow.controls.add($button3)
+
+
+$mainWindow.TopMost = $true
+
+
+[void] $mainWindow.ShowDialog()
